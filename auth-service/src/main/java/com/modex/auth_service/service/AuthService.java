@@ -91,8 +91,12 @@ public class AuthService {
         log.info("Usuario registrado exitosamente: {}", dto.email());
 
         // Generamos los tokens para el usuario recien registrado
-        return generateTokens(savedUser.getEmail(),
-                savedUser.getFullName());
+        // El rol por defecto al registrarse es CLIENTE
+        return generateTokens(
+                savedUser.getEmail(),
+                savedUser.getFullName(),
+                savedUser.getRole()
+        );
     }
 
     // ── METODO 2: login ───────────────────────────────────────
@@ -138,8 +142,12 @@ public class AuthService {
 
         log.info("Login exitoso para: {}", dto.email());
 
-        // Generamos y devolvemos los tokens
-        return generateTokens(user.getEmail(), user.getFullName());
+        // Generamos y devolvemos los tokens incluyendo el rol
+        return generateTokens(
+                user.getEmail(),
+                user.getFullName(),
+                user.getRole()
+        );
     }
 
     // ── METODO 3: refreshToken ────────────────────────────────
@@ -166,10 +174,10 @@ public class AuthService {
                                 "Usuario no encontrado o inactivo"
                         ));
 
-        // Generamos solo un nuevo access token
-        // El refresh token sigue siendo el mismo
+        // Generamos solo un nuevo access token incluyendo el rol
         String newAccessToken = jwtUtil.generateAccessToken(
-                user.getEmail()
+                user.getEmail(),
+                user.getRole()
         );
 
         log.info("Access token renovado para: {}", user.getEmail());
@@ -177,11 +185,12 @@ public class AuthService {
         // Devolvemos el nuevo access token con el mismo refresh token
         return new AuthResponseDTO(
                 newAccessToken,
-                dto.refreshToken(),  // mismo refresh token
+                dto.refreshToken(),
                 "Bearer",
                 jwtUtil.getAccessExpirationMs(),
                 user.getEmail(),
-                user.getFullName()
+                user.getFullName(),
+                user.getRole()
         );
     }
 
@@ -208,13 +217,15 @@ public class AuthService {
     // evitar repetir el mismo codigo en ambos metodos.
     // Eso se llama principio DRY — Don't Repeat Yourself.
     //
-    // Parametros: email y fullName del usuario
-    // Retorna: AuthResponseDTO con ambos tokens
-    private AuthResponseDTO generateTokens(String email,
-                                           String fullName) {
+    // Parametros: email, fullName y role del usuario
+    // Retorna: AuthResponseDTO con ambos tokens y el rol
+    private AuthResponseDTO generateTokens(
+            String email,
+            String fullName,
+            String role) {
 
-        // Generamos el access token JWT
-        String accessToken = jwtUtil.generateAccessToken(email);
+        // Generamos el access token JWT con el rol incluido
+        String accessToken = jwtUtil.generateAccessToken(email, role);
 
         // Creamos y guardamos el refresh token en MongoDB
         RefreshToken refreshToken = refreshTokenService
@@ -226,7 +237,8 @@ public class AuthService {
                 refreshToken.getToken(),
                 jwtUtil.getAccessExpirationMs(),
                 email,
-                fullName
+                fullName,
+                role
         );
     }
 }

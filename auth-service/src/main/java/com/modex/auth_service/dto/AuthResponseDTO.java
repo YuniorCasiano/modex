@@ -16,7 +16,8 @@
 //   "tokenType": "Bearer",
 //   "expiresIn": 3600000,
 //   "email": "juan@gmail.com",
-//   "fullName": "Juan Perez"
+//   "fullName": "Juan Perez",
+//   "role": "ADMIN"
 // }
 // ============================================================
 
@@ -53,18 +54,23 @@ public record AuthResponseDTO(
         // Nombre completo del usuario.
         // Util para mostrar "Bienvenido Juan" en el frontend
         // inmediatamente despues del login sin peticiones extra.
-        String fullName
+        String fullName,
+
+        // Rol del usuario — ADMIN o CLIENTE.
+        // El frontend lo usa para mostrar u ocultar el panel Admin.
+        String role
 
 ) {
     // Factory method — forma conveniente de crear un AuthResponseDTO.
     // Se usa asi:
-    // AuthResponseDTO.of(accessToken, refreshToken, 3600000L, email, fullName)
+    // AuthResponseDTO.of(accessToken, refreshToken, 3600000L, email, fullName, role)
     public static AuthResponseDTO of(
             String accessToken,
             String refreshToken,
             Long expiresIn,
             String email,
-            String fullName) {
+            String fullName,
+            String role) {
 
         return new AuthResponseDTO(
                 accessToken,
@@ -72,7 +78,8 @@ public record AuthResponseDTO(
                 "Bearer",    // tokenType siempre es Bearer
                 expiresIn,
                 email,
-                fullName
+                fullName,
+                role
         );
     }
 }
