@@ -32,6 +32,7 @@ public class ProductMapper {
                 product.getDescription(),
                 product.getPrice(),
                 product.getCategory(),
+                product.getGender(),
                 product.getBrand(),
                 product.getAvailableSizes(),
                 product.getAvailableColors(),
@@ -57,6 +58,7 @@ public class ProductMapper {
                 .description(dto.description())
                 .price(dto.price())
                 .category(dto.category())
+                .gender(dto.gender())
                 .brand(dto.brand())
                 .availableSizes(dto.availableSizes())
                 .availableColors(dto.availableColors())
@@ -91,6 +93,10 @@ public class ProductMapper {
 
         if (dto.category() != null && !dto.category().isBlank()) {
             product.setCategory(dto.category());
+        }
+
+        if (dto.gender() != null && !dto.gender().isBlank()) {
+            product.setGender(dto.gender());
         }
 
         if (dto.brand() != null && !dto.brand().isBlank()) {

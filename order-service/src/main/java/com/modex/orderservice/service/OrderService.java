@@ -208,4 +208,17 @@ public class OrderService {
                 order.getUpdatedAt()
         );
     }
+    public List<OrderResponseDTO> getAllOrders() {
+        return orderRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public OrderResponseDTO updateOrderStatus(Long id, String status) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+        order.setStatus(OrderStatus.valueOf(status));
+        return toResponseDTO(orderRepository.save(order));
+    }
 }

@@ -48,6 +48,9 @@ public record CreateProductDTO(
         @NotBlank(message = "La categoria es obligatoria")
         String category,
 
+        // Genero — opcional: MUJER, HOMBRE, NINOS
+        String gender,
+
         // Marca — obligatoria
         @NotBlank(message = "La marca es obligatoria")
         String brand,

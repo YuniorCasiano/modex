@@ -84,4 +84,21 @@ public class OrderController {
         return ResponseEntity.ok(
                 orderService.cancelOrder(id, userId));
     }
+
+    // GET /api/orders — todos los pedidos (solo ADMIN)
+    @GetMapping
+    public ResponseEntity<List<OrderResponseDTO>> getAllOrders() {
+        log.info("GET /api/orders - Admin obteniendo todos los pedidos");
+        return ResponseEntity.ok(orderService.getAllOrders());
+    }
+
+    // PUT /api/orders/{id}/status — cambiar estado (solo ADMIN)
+    @PutMapping("/{id}/status")
+    public ResponseEntity<OrderResponseDTO> updateStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+        log.info("PUT /api/orders/{}/status - Nuevo estado: {}", id, status);
+        return ResponseEntity.ok(orderService.updateOrderStatus(id, status));
+    }
 }
+

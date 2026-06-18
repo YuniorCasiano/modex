@@ -12,6 +12,9 @@
 
 package com.modex.auth_service.service;
 
+import com.modex.auth_service.dto.UserResponseDTO;
+import java.util.List;
+import java.util.stream.Collectors;
 import com.modex.auth_service.dto.AuthResponseDTO;
 import com.modex.auth_service.dto.LoginRequestDTO;
 import com.modex.auth_service.dto.RegisterRequestDTO;
@@ -240,5 +243,21 @@ public class AuthService {
                 fullName,
                 role
         );
+    }
+
+    public List<UserResponseDTO> getAllUsers() {
+        return userRepository.findByActiveTrue()
+                .stream()
+                .map(u -> new UserResponseDTO(
+                        u.getId(),
+                        u.getFullName(),
+                        u.getEmail(),
+                        u.getCity(),
+                        u.getCountry(),
+                        u.getRole(),
+                        u.getActive(),
+                        u.getCreatedAt()
+                ))
+                .collect(java.util.stream.Collectors.toList());
     }
 }

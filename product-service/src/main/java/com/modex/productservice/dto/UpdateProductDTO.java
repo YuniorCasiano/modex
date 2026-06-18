@@ -46,4 +46,9 @@ public record UpdateProductDTO(
         @Min(value = 0, message = "El stock no puede ser negativo")
         Integer stock
 
-) {}
+)
+{
+    public String gender() {
+        return "";
+    }
+}

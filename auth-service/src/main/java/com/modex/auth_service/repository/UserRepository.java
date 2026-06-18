@@ -13,6 +13,7 @@ package com.modex.auth_service.repository;
 import com.modex.auth_service.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -28,4 +29,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     // Verifica si existe un usuario con ese email.
     // Lo usamos en register para evitar duplicados.
     boolean existsByEmail(String email);
+
+    List<User> findByActiveTrue();
 }

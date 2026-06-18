@@ -10,35 +10,15 @@ const IconBag = () => (
   </svg>
 )
 
-export default function CartPanel({ push }) {
-  const { items, remove, clear, total, open, setOpen } = useCart()
-  const { token, user } = useAuth()
-  const [loading, setLoading] = useState(false)
+export default function CartPanel({ onCheckout }) {
+  const { items, remove, total, count, open, setOpen } = useCart()
+  const { user } = useAuth()
 
   const key = i => i.id + '-' + i.size + '-' + i.color
 
-  const checkout = async () => {
-    if (!token) { push('Inicia sesion para hacer un pedido', 'error'); return }
-    setLoading(true)
-    let errors = 0
-    for (const item of items) {
-      try {
-        const res = await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-          body: JSON.stringify({
-            productId: item.id, productName: item.name,
-            size: item.size, color: item.color,
-            quantity: item.qty, unitPrice: item.price,
-            shippingAddress: user?.city || 'Santo Domingo',
-          }),
-        })
-        if (!res.ok) errors++
-      } catch { errors++ }
-    }
-    setLoading(false)
-    if (errors === 0) { push('Pedidos realizados correctamente'); clear(); setOpen(false) }
-    else push('Algunos pedidos fallaron', 'error')
+  const handleCheckout = () => {
+    setOpen(false)
+    onCheckout()
   }
 
   return (
@@ -55,17 +35,14 @@ export default function CartPanel({ push }) {
         transition:'transform 0.3s ease',
         boxShadow: open ? '-8px 0 32px rgba(61,43,31,0.12)' : 'none',
       }}>
-
-        {/* Header */}
         <div style={{ padding:'1.25rem 1.5rem', borderBottom:'1px solid var(--c-border)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div style={{ fontFamily:'var(--serif)', fontSize:'1.2rem', fontWeight:700 }}>Mi carrito</div>
+          <div style={{ fontFamily:'var(--serif)', fontSize:'1.2rem', fontWeight:700 }}>Mi carrito ({count})</div>
           <button className="btn-ghost" onClick={() => setOpen(false)}
-            style={{ fontSize:'1.3rem', width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'50%' }}>
-            x
+            style={{ width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:'50%', fontSize:'1.1rem' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
 
-        {/* Items */}
         <div style={{ flex:1, overflowY:'auto', padding:'1rem' }}>
           {items.length === 0 ? (
             <div style={{ textAlign:'center', padding:'3rem 1rem', color:'var(--c-text3)' }}>
@@ -75,15 +52,11 @@ export default function CartPanel({ push }) {
           ) : (
             <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
               {items.map(item => (
-                <div key={key(item)} style={{
-                  background:'var(--c-sand)', border:'1px solid var(--c-border)',
-                  borderRadius:'var(--radius-sm)', padding:'0.875rem',
-                  display:'flex', gap:12, alignItems:'center',
-                }}>
-                  <div style={{ width:52, height:52, borderRadius:8, background:'var(--c-sand-d)', overflow:'hidden', flexShrink:0, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <div key={key(item)} style={{ background:'var(--c-sand)', border:'1px solid var(--c-border)', borderRadius:'var(--radius-sm)', padding:'0.875rem', display:'flex', gap:12, alignItems:'center' }}>
+                  <div style={{ width:52, height:52, borderRadius:8, background:'var(--c-sand-d)', overflow:'hidden', flexShrink:0 }}>
                     {item.image
                       ? <img src={item.image} alt={item.name} style={{ width:'100%', height:'100%', objectFit:'cover' }} onError={e => e.target.style.display='none'} />
-                      : <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color:'var(--c-text3)' }}><path d="M20.5 7.5L17 4h-2l-3 3-3-3H7L3.5 7.5 6 10l1-1v11h10V9l1 1 2.5-2.5z"/></svg>
+                      : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color:'var(--c-text3)' }}><path d="M20.5 7.5L17 4h-2l-3 3-3-3H7L3.5 7.5 6 10l1-1v11h10V9l1 1 2.5-2.5z"/></svg></div>
                     }
                   </div>
                   <div style={{ flex:1, minWidth:0 }}>
@@ -94,10 +67,10 @@ export default function CartPanel({ push }) {
                     RD${(item.price * item.qty).toLocaleString()}
                   </div>
                   <button onClick={() => remove(key(item))}
-                    style={{ background:'none', border:'none', color:'var(--c-text3)', cursor:'pointer', fontSize:'1rem', padding:4, lineHeight:1 }}
-                    onMouseEnter={e => e.target.style.color='var(--c-primary)'}
-                    onMouseLeave={e => e.target.style.color='var(--c-text3)'}>
-                    x
+                    style={{ background:'none', border:'none', color:'var(--c-text3)', cursor:'pointer', padding:4, display:'flex', alignItems:'center', justifyContent:'center' }}
+                    onMouseEnter={e => e.currentTarget.style.color='var(--c-primary)'}
+                    onMouseLeave={e => e.currentTarget.style.color='var(--c-text3)'}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                   </button>
                 </div>
               ))}
@@ -105,7 +78,6 @@ export default function CartPanel({ push }) {
           )}
         </div>
 
-        {/* Footer */}
         {items.length > 0 && (
           <div style={{ padding:'1.25rem 1.5rem', borderTop:'1px solid var(--c-border)' }}>
             <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'1rem' }}>
@@ -114,8 +86,11 @@ export default function CartPanel({ push }) {
                 RD${total.toLocaleString()}
               </span>
             </div>
-            <button className="btn-primary" style={{ width:'100%' }} onClick={checkout} disabled={loading}>
-              {loading ? 'Procesando...' : 'Confirmar pedido'}
+            <div style={{ fontSize:'0.75rem', color:'var(--c-text3)', marginBottom:'0.75rem', textAlign:'center' }}>
+              {total > 2000 ? 'Envio gratis incluido' : 'Agrega RD$'+(2000-total)+' mas para envio gratis'}
+            </div>
+            <button className="btn-primary" style={{ width:'100%', padding:'0.875rem' }} onClick={handleCheckout}>
+              Proceder al checkout
             </button>
           </div>
         )}

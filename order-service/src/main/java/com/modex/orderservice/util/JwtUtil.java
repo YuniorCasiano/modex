@@ -66,4 +66,13 @@ public class JwtUtil {
                 .getPayload()
                 .getExpiration();
     }
+
+    public String extractRole(String token) {
+        return Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
+    }
 }

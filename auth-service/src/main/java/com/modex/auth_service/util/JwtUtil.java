@@ -67,6 +67,15 @@ public class JwtUtil {
                 .getSubject();
     }
 
+    public String extractRole(String token) {
+        return Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
+    }
+
     // Verifica firma, email y expiracion
     public boolean isTokenValid(String token, String email) {
         try {

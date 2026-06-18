@@ -1,9 +1,5 @@
-#
+
 Write-File "src\index.css" $cssContent
-==============================================================
-#  MODEX PLUS — Setup frontend
-#  Ejecutar: powershell -ExecutionPolicy Bypass -File .\setup-modex-frontend.ps1
-# ==============================================================
 
 function Write-File {
     param([string]$Path, [string]$Content)

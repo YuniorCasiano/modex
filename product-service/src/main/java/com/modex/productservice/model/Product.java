@@ -72,6 +72,12 @@ public class Product implements Serializable {
     @Field("category")
     private String category;
 
+    // Genero al que va dirigido el producto
+// Valores: MUJER, HOMBRE, NINOS
+    @Indexed
+    @Field("gender")
+    private String gender;
+
     // Marca del producto
     // Ejemplos: Nike, Zara, H&M, Adidas
     @Indexed

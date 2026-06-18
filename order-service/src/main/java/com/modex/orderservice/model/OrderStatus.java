@@ -15,6 +15,12 @@ public enum OrderStatus {
     // y lo reservo exitosamente.
     CONFIRMED,
 
+    // El pedido fue enviado al cliente.
+    SHIPPED,
+
+    // El pedido fue entregado exitosamente al cliente.
+    DELIVERED,
+
     // El pedido fue cancelado. Puede ser porque:
     // - No hay stock disponible
     // - El usuario cancelo manualmente

@@ -11,6 +11,9 @@
 
 package com.modex.auth_service.controller;
 
+import com.modex.auth_service.dto.UserResponseDTO;
+import org.springframework.web.bind.annotation.GetMapping;
+import java.util.List;
 import com.modex.auth_service.dto.AuthResponseDTO;
 import com.modex.auth_service.dto.LoginRequestDTO;
 import com.modex.auth_service.dto.RefreshTokenRequestDTO;
@@ -136,5 +139,11 @@ public class AuthController {
 
         // HTTP 204 No Content — operacion exitosa sin body
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        log.info("GET /api/auth/users - Obteniendo todos los usuarios");
+        return ResponseEntity.ok(authService.getAllUsers());
     }
 }

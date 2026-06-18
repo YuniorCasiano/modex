@@ -43,6 +43,8 @@ public record ProductResponseDTO(
         // Categoria de la prenda
         String category,
 
+        String gender,
+
         // Marca del producto
         String brand,
 

@@ -103,13 +103,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 if (userExists && jwtUtil.isTokenValid(token, email)) {
 
-                    // Creamos un objeto UserDetails que Spring
-                    // Security entiende — con el email como username,
-                    // password vacia y sin roles por ahora.
+                    String role = jwtUtil.extractRole(token);
+                    String authority = (role != null) ? role : "CLIENTE";
+
                     UserDetails userDetails = User.builder()
                             .username(email)
                             .password("")
-                            .authorities(new ArrayList<>())
+                            .authorities(authority)
                             .build();
 
                     // Creamos el token de autenticacion de Spring Security.
